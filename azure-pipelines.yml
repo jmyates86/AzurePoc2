@@ -4,6 +4,11 @@
 # https://aka.ms/yaml
 
 jobs:
+    - job: ALMOctaneConnectionTest
+      steps:
+        - task: octane-connection-verifier@1
+          inputs:
+            OctaneServiceConnection: 'Octane Test'
     - job: AlmOctanePipelineStart
       condition: always()
       steps:
