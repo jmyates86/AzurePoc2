@@ -4,11 +4,47 @@
 # https://aka.ms/yaml
 
 jobs:
-- job: myJob
-  timeoutInMinutes: 10
-  pool:
-    vmImage: 'ubuntu-16.04'
-  steps:
-  - bash: echo "Hello world"
+    - job: AlmOctanePipelineStart
+      condition: always()
+      steps:
+      - task: octane-start-task@1
+        inputs:
+           OctaneServiceConnection: 'OctaneCon'
+           WorkspaceList: 'WS_ID'
+           GithubRepositoryConnection: 'GitCon'
 
-- job: OctaneCon
+    - job: A
+      steps:
+      - script: echo Hello, Job A!
+        displayName: 'Run a one-line script'
+      dependsOn:
+      - AlmOctanePipelineStart
+
+    - job: B
+      dependsOn: AlmOctanePipelineStart
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - task: Maven@3
+        inputs:
+          mavenPomFile: 'pom.xml'
+          mavenOptions: '-Xmx3072m'
+          javaHomeOption: 'JDKVersion'
+          jdkVersionOption: '1.8'
+          jdkArchitectureOption: 'x64'
+          publishJUnitResults: true
+          testResultsFiles: '**/surefire-reports/TEST-*.xml'
+          goals: 'package'
+
+    - job: AlmOctanePipelineEnd
+      condition: always()
+      steps:
+      - task: octane-end-task@1
+        inputs:
+          OctaneServiceConnection: 'OctaneCon'
+          WorkspaceList: 'WS_ID'
+          GithubRepositoryConnection: 'GitCon'
+      dependsOn:
+      - AlmOctanePipelineStart
+      - A
+      - B
