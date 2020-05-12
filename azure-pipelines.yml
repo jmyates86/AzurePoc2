@@ -10,8 +10,8 @@ jobs:
       - task: octane-start-task@1
         inputs:
            OctaneServiceConnection: 'Octane Test'
-           WorkspaceList: 'WS_ID'
-           GithubRepositoryConnection: 'GitCon'
+           WorkspaceList: '1002'
+           GithubRepositoryConnection: 'Github'
 
     - job: A
       steps:
@@ -42,8 +42,8 @@ jobs:
       - task: octane-end-task@1
         inputs:
           OctaneServiceConnection: 'Octane Test'
-          WorkspaceList: 'WS_ID'
-          GithubRepositoryConnection: 'GitCon'
+          WorkspaceList: '1002'
+          GithubRepositoryConnection: 'Github'
       dependsOn:
       - AlmOctanePipelineStart
       - A
